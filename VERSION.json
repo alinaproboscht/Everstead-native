@@ -1,0 +1,12 @@
+{
+  "version": "0.32",
+  "name": "Living Village",
+  "created": "2026-10-05",
+  "target": "Everstead Native / SwiftUI + RealityKit",
+  "files": [
+    "EversteadPathfinding.swift",
+    "EversteadLivingVillage.swift",
+    "EversteadNativeSave.swift"
+  ],
+  "status": "integration foundation"
+}

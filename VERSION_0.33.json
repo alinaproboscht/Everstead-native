@@ -1,0 +1,16 @@
+{
+  "version": "0.33",
+  "name": "Living Village Core",
+  "created": "2026-10-05",
+  "requires": [
+    "EversteadLivingVillage.swift",
+    "EversteadNativeSave.swift",
+    "EversteadPathfinding.swift"
+  ],
+  "adds": [
+    "EversteadSchedule.swift",
+    "EversteadEconomy.swift",
+    "EversteadFamilySystem.swift",
+    "EversteadSimulationEngine.swift"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": "0.34",
+  "name": "Native Integration Update",
+  "replace": [
+    "EversteadPathfinding.swift"
+  ],
+  "add": [
+    "EversteadGameLivingVillage.swift",
+    "EversteadNativeIntegration.swift"
+  ],
+  "requires": [
+    "EversteadLivingVillage.swift",
+    "EversteadEconomy.swift",
+    "EversteadFamilySystem.swift",
+    "EversteadSchedule.swift",
+    "EversteadSimulationEngine.swift",
+    "EversteadNativeSave.swift"
+  ]
+}

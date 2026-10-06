@@ -1,0 +1,12 @@
+{
+  "version": "0.36",
+  "name": "Living Village Connected - Runtime Foundation",
+  "status": "requires ContentView migration",
+  "files": [
+    "EversteadRuntime.swift",
+    "EversteadConnectedRootView.swift",
+    "MyApp_0.36.swift",
+    "Everstead036ConnectionState.swift"
+  ],
+  "safety": "Prevents accidental dual EversteadGame instances."
+}

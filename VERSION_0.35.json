@@ -1,0 +1,12 @@
+{
+  "version": "0.35",
+  "name": "Live Simulation",
+  "replace": [
+    "EversteadNativeIntegration.swift"
+  ],
+  "add": [
+    "EversteadLiveSimulation.swift",
+    "EversteadLiveSimulationHost.swift"
+  ],
+  "notes": "Live synchronized layer; EversteadGame remains authoritative to avoid duplicate simulation ticks."
+}

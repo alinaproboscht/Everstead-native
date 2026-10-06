@@ -1,0 +1,8 @@
+{
+  "version": "0.37",
+  "name": "EversteadCore Swift Package",
+  "module": "EversteadCore",
+  "swift_tools_version": "5.9",
+  "minimum_iOS": "17",
+  "status": "package-ready"
+}

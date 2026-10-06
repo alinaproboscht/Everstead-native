@@ -1,16 +1,16 @@
 import Foundation
 
-// MARK: - EVERSTEAD 0.33
-// Native production-chain simulation.
+// MARK: - EVERSTEAD 0.37
+// Public production-chain simulation.
 
-struct EversteadProductionSite: Identifiable, Codable, Hashable {
-    let id: UUID
-    var buildingID: UUID?
-    var recipe: EversteadProductionRecipe
-    var progressHours: Double
-    var enabled: Bool
+public struct EversteadProductionSite: Identifiable, Codable, Hashable, Sendable {
+    public let id: UUID
+    public var buildingID: UUID?
+    public var recipe: EversteadProductionRecipe
+    public var progressHours: Double
+    public var enabled: Bool
 
-    init(
+    public init(
         id: UUID = UUID(),
         buildingID: UUID? = nil,
         recipe: EversteadProductionRecipe,
@@ -25,7 +25,7 @@ struct EversteadProductionSite: Identifiable, Codable, Hashable {
     }
 }
 
-extension EversteadInventory {
+public extension EversteadInventory {
     func canConsume(_ goods: [EversteadGood: Double]) -> Bool {
         goods.allSatisfy { amount(of: $0.key) >= $0.value }
     }
@@ -45,7 +45,7 @@ extension EversteadInventory {
     }
 }
 
-extension EversteadVillageSimulation {
+public extension EversteadVillageSimulation {
     mutating func runProduction(
         sites: inout [EversteadProductionSite],
         hours: Double

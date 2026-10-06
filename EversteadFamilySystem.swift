@@ -1,9 +1,10 @@
 import Foundation
 
-// MARK: - EVERSTEAD 0.33
-// Household and family helpers.
+// MARK: - EVERSTEAD 0.37
+// Public household and family helpers.
 
-extension EversteadVillageSimulation {
+public extension EversteadVillageSimulation {
+    @discardableResult
     mutating func createHousehold(
         name: String,
         memberVillagerIDs: [UUID],

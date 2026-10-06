@@ -1,33 +1,38 @@
 import Foundation
 
-// MARK: - EVERSTEAD 0.32
-// Living Village simulation layer.
-// This file deliberately keeps the simulation independent from RealityKit.
+// MARK: - EVERSTEAD 0.37
+// Public Living Village models for EversteadCore.
 
-enum EversteadLifeStage: String, Codable, CaseIterable {
-    case infant
-    case child
-    case teen
-    case adult
-    case senior
+public enum EversteadLifeStage: String, Codable, CaseIterable, Sendable {
+    case infant, child, teen, adult, senior
 }
 
-enum EversteadNeedKind: String, Codable, CaseIterable {
-    case hunger
-    case energy
-    case social
-    case hygiene
-    case fun
+public enum EversteadNeedKind: String, Codable, CaseIterable, Sendable {
+    case hunger, energy, social, hygiene, fun
 }
 
-struct EversteadNeeds: Codable, Hashable {
-    var hunger: Double = 85
-    var energy: Double = 85
-    var social: Double = 75
-    var hygiene: Double = 80
-    var fun: Double = 70
+public struct EversteadNeeds: Codable, Hashable, Sendable {
+    public var hunger: Double
+    public var energy: Double
+    public var social: Double
+    public var hygiene: Double
+    public var fun: Double
 
-    mutating func clamp() {
+    public init(
+        hunger: Double = 85,
+        energy: Double = 85,
+        social: Double = 75,
+        hygiene: Double = 80,
+        fun: Double = 70
+    ) {
+        self.hunger = hunger
+        self.energy = energy
+        self.social = social
+        self.hygiene = hygiene
+        self.fun = fun
+    }
+
+    public mutating func clamp() {
         hunger = min(100, max(0, hunger))
         energy = min(100, max(0, energy))
         social = min(100, max(0, social))
@@ -35,7 +40,7 @@ struct EversteadNeeds: Codable, Hashable {
         fun = min(100, max(0, fun))
     }
 
-    mutating func decay(hours: Double) {
+    public mutating func decay(hours: Double) {
         hunger -= 4.0 * hours
         energy -= 2.6 * hours
         social -= 1.5 * hours
@@ -44,7 +49,7 @@ struct EversteadNeeds: Codable, Hashable {
         clamp()
     }
 
-    var mostUrgent: EversteadNeedKind {
+    public var mostUrgent: EversteadNeedKind {
         let values: [(EversteadNeedKind, Double)] = [
             (.hunger, hunger), (.energy, energy), (.social, social),
             (.hygiene, hygiene), (.fun, fun)
@@ -53,25 +58,18 @@ struct EversteadNeeds: Codable, Hashable {
     }
 }
 
-enum EversteadActivity: String, Codable, CaseIterable {
-    case sleeping
-    case eating
-    case working
-    case shopping
-    case socializing
-    case leisure
-    case travelling
-    case idle
+public enum EversteadActivity: String, Codable, CaseIterable, Sendable {
+    case sleeping, eating, working, shopping, socializing, leisure, travelling, idle
 }
 
-struct EversteadHousehold: Identifiable, Codable, Hashable {
-    let id: UUID
-    var name: String
-    var memberIDs: [UUID]
-    var homeBuildingID: UUID?
-    var money: Double
+public struct EversteadHousehold: Identifiable, Codable, Hashable, Sendable {
+    public let id: UUID
+    public var name: String
+    public var memberIDs: [UUID]
+    public var homeBuildingID: UUID?
+    public var money: Double
 
-    init(
+    public init(
         id: UUID = UUID(),
         name: String,
         memberIDs: [UUID] = [],
@@ -86,20 +84,20 @@ struct EversteadHousehold: Identifiable, Codable, Hashable {
     }
 }
 
-struct EversteadResidentLife: Identifiable, Codable, Hashable {
-    let id: UUID
-    var villagerID: UUID
-    var householdID: UUID?
-    var partnerVillagerID: UUID?
-    var parentVillagerIDs: [UUID]
-    var childVillagerIDs: [UUID]
-    var workplaceBuildingID: UUID?
-    var lifeStage: EversteadLifeStage
-    var ageYears: Int
-    var needs: EversteadNeeds
-    var activity: EversteadActivity
+public struct EversteadResidentLife: Identifiable, Codable, Hashable, Sendable {
+    public let id: UUID
+    public var villagerID: UUID
+    public var householdID: UUID?
+    public var partnerVillagerID: UUID?
+    public var parentVillagerIDs: [UUID]
+    public var childVillagerIDs: [UUID]
+    public var workplaceBuildingID: UUID?
+    public var lifeStage: EversteadLifeStage
+    public var ageYears: Int
+    public var needs: EversteadNeeds
+    public var activity: EversteadActivity
 
-    init(
+    public init(
         id: UUID = UUID(),
         villagerID: UUID,
         householdID: UUID? = nil,
@@ -126,75 +124,84 @@ struct EversteadResidentLife: Identifiable, Codable, Hashable {
     }
 }
 
-enum EversteadGood: String, Codable, CaseIterable {
-    case grain
-    case flour
-    case bread
-    case fish
-    case vegetables
-    case wood
-    case tools
+public enum EversteadGood: String, Codable, CaseIterable, Sendable {
+    case grain, flour, bread, fish, vegetables, wood, tools
 }
 
-struct EversteadInventory: Codable, Hashable {
-    private(set) var amounts: [EversteadGood: Double] = [:]
+public struct EversteadInventory: Codable, Hashable, Sendable {
+    public private(set) var amounts: [EversteadGood: Double]
 
-    func amount(of good: EversteadGood) -> Double {
+    public init(amounts: [EversteadGood: Double] = [:]) {
+        self.amounts = amounts
+    }
+
+    public func amount(of good: EversteadGood) -> Double {
         amounts[good, default: 0]
     }
 
-    mutating func add(_ good: EversteadGood, amount: Double) {
+    public mutating func add(_ good: EversteadGood, amount: Double) {
         guard amount > 0 else { return }
         amounts[good, default: 0] += amount
     }
 
     @discardableResult
-    mutating func remove(_ good: EversteadGood, amount: Double) -> Bool {
+    public mutating func remove(_ good: EversteadGood, amount: Double) -> Bool {
         guard amount > 0, self.amount(of: good) >= amount else { return false }
         amounts[good, default: 0] -= amount
         return true
     }
 }
 
-struct EversteadProductionRecipe: Codable, Hashable {
-    var inputs: [EversteadGood: Double]
-    var outputs: [EversteadGood: Double]
-    var hours: Double
+public struct EversteadProductionRecipe: Codable, Hashable, Sendable {
+    public var inputs: [EversteadGood: Double]
+    public var outputs: [EversteadGood: Double]
+    public var hours: Double
+
+    public init(
+        inputs: [EversteadGood: Double],
+        outputs: [EversteadGood: Double],
+        hours: Double
+    ) {
+        self.inputs = inputs
+        self.outputs = outputs
+        self.hours = hours
+    }
 }
 
-enum EversteadProduction {
-    static let farm = EversteadProductionRecipe(
-        inputs: [:],
-        outputs: [.grain: 6, .vegetables: 3],
-        hours: 6
+public enum EversteadProduction {
+    public static let farm = EversteadProductionRecipe(
+        inputs: [:], outputs: [.grain: 6, .vegetables: 3], hours: 6
     )
-
-    static let mill = EversteadProductionRecipe(
-        inputs: [.grain: 4],
-        outputs: [.flour: 3],
-        hours: 3
+    public static let mill = EversteadProductionRecipe(
+        inputs: [.grain: 4], outputs: [.flour: 3], hours: 3
     )
-
-    static let bakery = EversteadProductionRecipe(
-        inputs: [.flour: 2],
-        outputs: [.bread: 4],
-        hours: 2
+    public static let bakery = EversteadProductionRecipe(
+        inputs: [.flour: 2], outputs: [.bread: 4], hours: 2
     )
-
-    static let fishing = EversteadProductionRecipe(
-        inputs: [:],
-        outputs: [.fish: 3],
-        hours: 4
+    public static let fishing = EversteadProductionRecipe(
+        inputs: [:], outputs: [.fish: 3], hours: 4
     )
 }
 
-struct EversteadVillageSimulation: Codable {
-    var households: [EversteadHousehold] = []
-    var residents: [EversteadResidentLife] = []
-    var inventory = EversteadInventory()
-    var elapsedHours: Double = 0
+public struct EversteadVillageSimulation: Codable, Sendable {
+    public var households: [EversteadHousehold]
+    public var residents: [EversteadResidentLife]
+    public var inventory: EversteadInventory
+    public var elapsedHours: Double
 
-    mutating func tick(hours: Double) {
+    public init(
+        households: [EversteadHousehold] = [],
+        residents: [EversteadResidentLife] = [],
+        inventory: EversteadInventory = EversteadInventory(),
+        elapsedHours: Double = 0
+    ) {
+        self.households = households
+        self.residents = residents
+        self.inventory = inventory
+        self.elapsedHours = elapsedHours
+    }
+
+    public mutating func tick(hours: Double) {
         guard hours > 0 else { return }
         elapsedHours += hours
 
@@ -206,16 +213,11 @@ struct EversteadVillageSimulation: Codable {
 
     private func suggestedActivity(for resident: EversteadResidentLife) -> EversteadActivity {
         switch resident.needs.mostUrgent {
-        case .hunger:
-            return .eating
-        case .energy:
-            return .sleeping
-        case .social:
-            return .socializing
-        case .hygiene:
-            return .idle
-        case .fun:
-            return .leisure
+        case .hunger: return .eating
+        case .energy: return .sleeping
+        case .social: return .socializing
+        case .hygiene: return .idle
+        case .fun: return .leisure
         }
     }
 }

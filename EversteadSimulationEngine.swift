@@ -1,31 +1,33 @@
 import Foundation
 import Combine
 
-// MARK: - EVERSTEAD 0.33
-// Observable simulation controller kept separate from RealityKit rendering.
+// MARK: - EVERSTEAD 0.37
+// Public observable Living Village simulation controller.
 
 @MainActor
-final class EversteadSimulationEngine: ObservableObject {
-    @Published private(set) var simulation: EversteadVillageSimulation
-    @Published private(set) var productionSites: [EversteadProductionSite]
-    @Published private(set) var day: Int
-    @Published private(set) var hour: Double
+public final class EversteadSimulationEngine: ObservableObject {
+    @Published public private(set) var simulation: EversteadVillageSimulation
+    @Published public private(set) var productionSites: [EversteadProductionSite]
+    @Published public private(set) var day: Int
+    @Published public private(set) var hour: Double
 
-    var dailyPlan = EversteadDailyPlan()
+    public var dailyPlan: EversteadDailyPlan
 
-    init(
+    public init(
         simulation: EversteadVillageSimulation = EversteadVillageSimulation(),
         productionSites: [EversteadProductionSite] = [],
         day: Int = 1,
-        hour: Double = 7
+        hour: Double = 7,
+        dailyPlan: EversteadDailyPlan = EversteadDailyPlan()
     ) {
         self.simulation = simulation
         self.productionSites = productionSites
         self.day = max(1, day)
         self.hour = hour.truncatingRemainder(dividingBy: 24)
+        self.dailyPlan = dailyPlan
     }
 
-    func advance(hours: Double) {
+    public func advance(hours: Double) {
         guard hours > 0 else { return }
 
         simulation.tick(hours: hours)
@@ -48,13 +50,15 @@ final class EversteadSimulationEngine: ObservableObject {
         }
     }
 
-    func registerResident(
+    public func registerResident(
         villagerID: UUID,
         ageYears: Int = 25,
         lifeStage: EversteadLifeStage = .adult,
         workplaceBuildingID: UUID? = nil
     ) {
-        guard !simulation.residents.contains(where: { $0.villagerID == villagerID }) else {
+        guard !simulation.residents.contains(where: {
+            $0.villagerID == villagerID
+        }) else {
             return
         }
 
@@ -68,7 +72,7 @@ final class EversteadSimulationEngine: ObservableObject {
         )
     }
 
-    func addProductionSite(
+    public func addProductionSite(
         buildingID: UUID?,
         recipe: EversteadProductionRecipe
     ) {
@@ -80,7 +84,7 @@ final class EversteadSimulationEngine: ObservableObject {
         )
     }
 
-    func save() throws {
+    public func save() throws {
         try EversteadNativeSaveStore.save(simulation)
     }
 }

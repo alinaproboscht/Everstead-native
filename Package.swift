@@ -15,7 +15,15 @@ let package = Package(
     targets: [
         .target(
             name: "EversteadCore",
-            path: "Sources/EversteadCore"
+            path: ".",
+            sources: [
+                "EversteadLivingVillage.swift",
+                "EversteadEconomy.swift",
+                "EversteadFamilySystem.swift",
+                "EversteadSchedule.swift",
+                "EversteadNativeSave.swift",
+                "EversteadSimulationEngine.swift"
+            ]
         )
     ]
 )
